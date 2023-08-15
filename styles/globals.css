@@ -18,3 +18,21 @@ a {
 * {
     box-sizing: border-box;
 }
+
+.global-button {
+    padding: 4px 8px;
+    margin: 2px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+}
+
+.global-button:hover {
+    background-color: #45a049;
+}

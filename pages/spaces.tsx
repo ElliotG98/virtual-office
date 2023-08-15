@@ -2,7 +2,7 @@ import { useState } from 'react';
 import EmployeeCard, { Employee } from '@components/EmployeeCard';
 import EmployeeModal from '@components/EmployeeModal';
 
-export default function Office() {
+export default function Space() {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
         null,
@@ -40,7 +40,7 @@ export default function Office() {
 
     return (
         <div className="min-h-screen bg-gray-800 overflow-hidden">
-            <h1 className="text-white text-center py-4">Office Space</h1>
+            <h1 className="text-white text-center py-4">Space</h1>
 
             <button
                 onClick={addEmployee}
