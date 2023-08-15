@@ -1,14 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EmployeeCard, { Employee } from '@components/EmployeeCard';
 import EmployeeModal from '@components/EmployeeModal';
+import { getSpace, getSpaceUsers } from '@api/spaces';
+import { useRouter } from 'next/router';
 
 export default function Space() {
+    const router = useRouter();
+    const { space_id } = router.query;
+
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
         null,
     );
     const maxEmployees = 100;
     const zoomLevel = employees.length > 10 ? 'scale(0.5)' : 'scale(1)';
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        if (typeof space_id !== 'string') {
+            router.replace('/');
+        } else {
+            const space = await getSpace(space_id);
+            console.log(space);
+            const users = await getSpaceUsers(space_id);
+            console.log(users);
+        }
+    };
 
     const generateRandomName = () => {
         const names = [

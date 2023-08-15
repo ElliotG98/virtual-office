@@ -17,10 +17,10 @@ export default function Home() {
     const handleCreateSpaceClick = async () => {
         if (isLoggedIn) {
             if (spaceName) {
-                const response = await createSpace(spaceName);
+                const space_id = await createSpace(spaceName);
 
-                if (response?.ok) {
-                    router.push(`/spaces`);
+                if (space_id) {
+                    router.push(`/spaces/${space_id}`);
                 }
             } else {
                 setShowSpaceNameInput(true);
