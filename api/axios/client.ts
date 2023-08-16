@@ -7,6 +7,10 @@ export const client = axios.create({
     },
 });
 
-export const setAuthorizationToken = (token: string) => {
-    client.defaults.headers['Authorization'] = `Bearer ${token}`;
-};
+client.interceptors.request.use((config) => {
+    const token = localStorage.getItem('cognito_id_token');
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+});

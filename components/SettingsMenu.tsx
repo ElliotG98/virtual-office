@@ -1,14 +1,14 @@
 import { FC } from 'react';
 
 interface Props {
-    employeeId: number;
-    onDelete: (id: number) => void;
+    userId: string;
+    onDelete: (id: string) => void;
     onProfileClick: () => void;
 }
 
-const SettingsMenu: FC<Props> = ({ employeeId, onDelete, onProfileClick }) => {
+const SettingsMenu: FC<Props> = ({ userId, onDelete, onProfileClick }) => {
     const handleDelete = () => {
-        onDelete(employeeId);
+        onDelete(userId);
     };
     return (
         <div className="absolute top-0 left-0 w-0 h-6 opacity-0 group-hover:w-48 group-hover:opacity-100 transition-all duration-200 flex space-x-2">

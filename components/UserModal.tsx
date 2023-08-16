@@ -1,24 +1,24 @@
 import { FC } from 'react';
-import { Employee } from './EmployeeCard';
+import { User } from './UserCard';
 
 interface Props {
-    employee: Employee;
+    user: User;
     onClose: () => void;
 }
 
-const EmployeeModal: FC<Props> = ({ employee, onClose }) => {
+const UserModal: FC<Props> = ({ user, onClose }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded shadow-lg">
-                <h2 className="text-xl mb-4">{employee.name}</h2>
+                <h2 className="text-xl mb-4">{user.name}</h2>
                 <p>
-                    <strong>Email:</strong> {employee.email}
+                    <strong>Email:</strong> {user.email}
                 </p>
                 <p>
-                    <strong>Phone:</strong> {employee.phone}
+                    <strong>Phone:</strong> {user.phone}
                 </p>
                 <p>
-                    <strong>Title:</strong> {employee.title}
+                    <strong>Title:</strong> {user.title}
                 </p>
 
                 <button
@@ -32,4 +32,4 @@ const EmployeeModal: FC<Props> = ({ employee, onClose }) => {
     );
 };
 
-export default EmployeeModal;
+export default UserModal;

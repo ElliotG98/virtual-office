@@ -1,13 +1,9 @@
-import { setAuthorizationToken, handleError, client } from './axios';
+import { handleError, client } from './axios';
+import { Space, User } from '@customTypes/index';
 
-const idToken = localStorage.getItem('cognito_id_token');
-if (idToken) {
-    setAuthorizationToken(idToken);
-}
-
-export const getSpace = async (space_id: string) => {
+export const getSpace = async (space_id: string): Promise<Space> => {
     try {
-        const response = await client.get(`/spaces/${space_id}`);
+        const response = await client.get<Space>(`/spaces/${space_id}`);
         return response.data;
     } catch (error) {
         handleError(error);
@@ -15,9 +11,9 @@ export const getSpace = async (space_id: string) => {
     }
 };
 
-export const getSpaceUsers = async (space_id: string) => {
+export const getSpaceUsers = async (space_id: string): Promise<User> => {
     try {
-        const response = await client.get(`/spaces/${space_id}/users`);
+        const response = await client.get<User>(`/spaces/${space_id}/users`);
         return response.data;
     } catch (error) {
         handleError(error);
@@ -25,9 +21,11 @@ export const getSpaceUsers = async (space_id: string) => {
     }
 };
 
-export const createSpace = async (name: string) => {
+export const createSpace = async (name: string): Promise<string> => {
     try {
-        const response = await client.post('/spaces', { name });
+        const response = await client.post<{ space_id: string }>('/spaces', {
+            name,
+        });
         return response.data.space_id;
     } catch (error) {
         handleError(error);

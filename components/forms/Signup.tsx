@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
 import { userPool } from '@config/cognito';
 import { loginUser, useAuth } from '@config/auth';
+import { createUser } from '@api/users';
 
 interface SignupFormProps {
     onSuccess: () => void;
@@ -41,7 +42,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
         });
     };
 
-    const handleVerify = (event: React.FormEvent) => {
+    const handleVerify = async (event: React.FormEvent) => {
         event.preventDefault();
 
         if (cognitoUser) {
@@ -54,7 +55,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
                         return;
                     }
                     console.log('Verification success:', result);
-                    loginUser(email, password, setIsLoggedIn, onSuccess);
+                    const userId = cognitoUser.getUsername();
+                    console.log(userId);
+
+                    // await createUser(result.)
+                    //loginUser(email, password, setIsLoggedIn, onSuccess);
                 },
             );
         }

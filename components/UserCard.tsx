@@ -1,22 +1,15 @@
 import { FC } from 'react';
 import SettingsMenu from './SettingsMenu';
-
-export interface Employee {
-    id: number;
-    name: string;
-    email?: string;
-    phone?: string;
-    title?: string;
-}
+import { User } from '@customTypes/index';
 
 interface Props {
-    employee: Employee;
-    onDelete: (id: number) => void;
+    user: User;
+    onDelete: (id: string) => void;
     onProfileClick: () => void;
 }
 
-const EmployeeCard: FC<Props> = ({ employee, onDelete, onProfileClick }) => {
-    const initial = employee.name[0].toUpperCase();
+const UserCard: FC<Props> = ({ user, onDelete, onProfileClick }) => {
+    const initial = user.name[0].toUpperCase();
 
     return (
         <div className="m-4 group relative">
@@ -26,10 +19,10 @@ const EmployeeCard: FC<Props> = ({ employee, onDelete, onProfileClick }) => {
 
             <div className="w-64 h-32 bg-gradient-to-r from-brown-700 via-brown-600 to-brown-700 mb-2 relative hover:bg-opacity-80 transition-all duration-200">
                 <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    {employee.name}
+                    {user.name}
                 </div>
                 <SettingsMenu
-                    employeeId={employee.id}
+                    userId={user.id}
                     onDelete={onDelete}
                     onProfileClick={onProfileClick}
                 />
@@ -38,4 +31,4 @@ const EmployeeCard: FC<Props> = ({ employee, onDelete, onProfileClick }) => {
     );
 };
 
-export default EmployeeCard;
+export default UserCard;

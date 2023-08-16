@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react';
-import EmployeeCard, { Employee } from '@components/EmployeeCard';
-import EmployeeModal from '@components/EmployeeModal';
+import UserCard from '@components/UserCard';
+import UserModal from '@components/UserModal';
 import { getSpace, getSpaceUsers } from '@api/spaces';
 import { useRouter } from 'next/router';
+import { User } from '@customTypes/index';
 
 export default function Space() {
     const router = useRouter();
     const { space_id } = router.query;
 
-    const [employees, setEmployees] = useState<Employee[]>([]);
-    const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
-        null,
-    );
-    const maxEmployees = 100;
-    const zoomLevel = employees.length > 10 ? 'scale(0.5)' : 'scale(1)';
+    const [users, setUsers] = useState<User[]>([]);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const maxUsers = 100;
+    const zoomLevel = users.length > 10 ? 'scale(0.5)' : 'scale(1)';
 
     useEffect(() => {
         fetchData();
@@ -25,8 +24,9 @@ export default function Space() {
         } else {
             const space = await getSpace(space_id);
             console.log(space);
-            const users = await getSpaceUsers(space_id);
-            console.log(users);
+            const spaceUsers = await getSpaceUsers(space_id);
+            console.log(spaceUsers);
+            setUsers([...users, spaceUsers]);
         }
     };
 
@@ -43,19 +43,20 @@ export default function Space() {
         return names[Math.floor(Math.random() * names.length)];
     };
 
-    const addEmployee = () => {
-        if (employees.length < maxEmployees) {
-            const id = new Date().getTime(); // Unique ID based on timestamp
-            setEmployees([...employees, { id, name: generateRandomName() }]);
-        }
+    const addUser = () => {
+        // if (users.length < maxUsers) {
+        //     const id = new Date().getTime(); // Unique ID based on timestamp
+        //     setUsers([...users, { id, name: generateRandomName() }]);
+        // }
     };
 
-    const removeEmployee = (id: number) => {
-        setEmployees(employees.filter((emp) => emp.id !== id));
+    const removeUser = (id: string) => {
+        //TODO: remove user from space -> refetch users
+        setUsers(users.filter((emp) => emp.id !== id));
     };
 
-    const openEmployeeProfile = (employee: Employee) => {
-        setSelectedEmployee(employee);
+    const openUserProfile = (user: User) => {
+        setSelectedUser(user);
     };
 
     return (
@@ -63,28 +64,28 @@ export default function Space() {
             <h1 className="text-white text-center py-4">Space</h1>
 
             <button
-                onClick={addEmployee}
+                onClick={addUser}
                 className="bg-blue-500 text-white rounded px-4 py-2 mb-4"
             >
-                Add Employee
+                Add User
             </button>
             <div
                 className="flex flex-wrap justify-center transform transition-transform duration-300"
                 style={{ transform: zoomLevel }}
             >
-                {employees.map((employee) => (
-                    <EmployeeCard
-                        key={employee.id}
-                        employee={employee}
-                        onDelete={removeEmployee}
-                        onProfileClick={() => openEmployeeProfile(employee)}
+                {users.map((user) => (
+                    <UserCard
+                        key={user.id}
+                        user={user}
+                        onDelete={removeUser}
+                        onProfileClick={() => openUserProfile(user)}
                     />
                 ))}
             </div>
-            {selectedEmployee && (
-                <EmployeeModal
-                    employee={selectedEmployee}
-                    onClose={() => setSelectedEmployee(null)}
+            {selectedUser && (
+                <UserModal
+                    user={selectedUser}
+                    onClose={() => setSelectedUser(null)}
                 />
             )}
         </div>
