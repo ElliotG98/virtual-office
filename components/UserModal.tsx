@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { User } from './UserCard';
+import { User } from '@customTypes/index';
 
 interface Props {
     user: User;

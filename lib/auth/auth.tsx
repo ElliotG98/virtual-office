@@ -1,10 +1,18 @@
-import { AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
+import {
+    AuthenticationDetails,
+    CognitoUser,
+    CognitoUserAttribute,
+} from 'amazon-cognito-identity-js';
 import React, { createContext, useContext, useState } from 'react';
 import { userPool } from './cognito';
 
 interface AuthContextValue {
     isLoggedIn: boolean;
     setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+    showModal: boolean;
+    setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    mode: 'login' | 'signup';
+    setMode: React.Dispatch<React.SetStateAction<'login' | 'signup'>>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -23,9 +31,20 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [mode, setMode] = useState<'login' | 'signup'>('login');
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+        <AuthContext.Provider
+            value={{
+                isLoggedIn,
+                setIsLoggedIn,
+                showModal,
+                setShowModal,
+                mode,
+                setMode,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
@@ -58,5 +77,38 @@ export const loginUser = (
         onFailure: (err) => {
             alert(err.message);
         },
+    });
+};
+
+export const signupUser = (
+    email: string,
+    password: string,
+    attributeList: CognitoUserAttribute[],
+    onSuccess: (user: CognitoUser) => void,
+    onError: (message: string) => void,
+) => {
+    userPool.signUp(email, password, attributeList, [], (err, result) => {
+        if (err) {
+            onError(err.message);
+            return;
+        }
+        if (result?.user) {
+            onSuccess(result.user);
+        }
+    });
+};
+
+export const confirmRegistration = (
+    cognitoUser: CognitoUser,
+    verificationCode: string,
+    onSuccess: (result: string) => void,
+    onError: (message: string) => void,
+) => {
+    cognitoUser.confirmRegistration(verificationCode, true, (err, result) => {
+        if (err) {
+            onError(err.message);
+            return;
+        }
+        onSuccess('Verification success: ' + result);
     });
 };

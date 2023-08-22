@@ -1,37 +1,42 @@
-import React, { useState } from 'react';
-import { AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
-import { userPool } from '@config/cognito';
-import { loginUser, useAuth } from '@config/auth';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { loginUser, useAuth } from '@lib/auth/auth';
 
 interface LoginFormProps {
     onSuccess: () => void;
 }
 
+interface FormData {
+    email: string;
+    password: string;
+}
+
 const Login: React.FC<LoginFormProps> = ({ onSuccess }) => {
     const { setIsLoggedIn } = useAuth();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormData>();
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-
-        loginUser(email, password, setIsLoggedIn, onSuccess);
+    const onSubmit = (data: FormData) => {
+        loginUser(data.email, data.password, setIsLoggedIn, onSuccess);
     };
 
     return (
         <div className="p-8 bg-white rounded shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Login</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-600">
                         Email
                     </label>
                     <input
                         type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        {...register('email', { required: true })}
                         className="mt-1 p-2 w-full border rounded-md"
                     />
+                    {errors.email && <span>Email is required</span>}
                 </div>
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-600">
@@ -39,10 +44,10 @@ const Login: React.FC<LoginFormProps> = ({ onSuccess }) => {
                     </label>
                     <input
                         type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        {...register('password', { required: true })}
                         className="mt-1 p-2 w-full border rounded-md"
                     />
+                    {errors.password && <span>Password is required</span>}
                 </div>
                 <button type="submit" className="global-button">
                     Login

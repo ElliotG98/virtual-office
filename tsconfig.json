@@ -21,7 +21,8 @@
         ],
         "paths": {
             "@components/*": ["./components/*"],
-            "@config/*": ["./config/*"],
+            "@lib/*": ["./lib/*"],
+            "@hooks/*": ["./hooks/*"],
             "@api/*": ["./api/*"],
             "@pages/*": ["./pages/*"],
             "@styles/*": ["./styles/*"],
