@@ -1,3 +1,5 @@
+export type UserSpaceStatus = 'active' | 'requested' | 'removed';
+
 export interface Space {
     name: string;
     space_id: string;

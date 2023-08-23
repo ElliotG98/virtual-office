@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Modal } from '@components/modals';
 import useRequireLogin from '@hooks/useRequireLogin';
+import { addUserToSpace } from '@api/spaces';
 
 export const JoinSpaceModal: React.FC = () => {
     const { requireLogin } = useRequireLogin();
     const [isOpen, setIsOpen] = useState(false);
     const [spaceId, setSpaceId] = useState('');
 
-    const handleJoinSpaceSubmit = () => {
-        console.log('Join Space clicked with Space ID:', spaceId);
+    const handleJoinSpaceSubmit = async () => {
+        await addUserToSpace(spaceId, 'requested');
     };
 
     const handleOpenModal = () => {
