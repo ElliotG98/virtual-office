@@ -33,15 +33,43 @@ export const createSpace = async (name: string): Promise<string> => {
     }
 };
 
-export const addUserToSpace = async (
+export const sendUserRequestToSpace = async (
     space_id: string,
-    status: UserSpaceStatus,
 ): Promise<string> => {
     try {
-        const response = await client.post(`/spaces/${space_id}/users`, {
-            status,
-        });
-        return response.data.space_id;
+        const response = await client.post(`/spaces/${space_id}/users/request`);
+        return response.data?.message;
+    } catch (error: any) {
+        const errorMessage =
+            error?.response?.data?.message || 'An error occurred';
+        throw new Error(errorMessage);
+    }
+};
+
+export const approveUserRequestToSpace = async (
+    space_id: string,
+    user_id: string,
+): Promise<{ message?: string }> => {
+    try {
+        const response = await client.post(
+            `/spaces/${space_id}/users/${user_id}/approve`,
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+export const rejectUserRequestToSpace = async (
+    space_id: string,
+    user_id: string,
+): Promise<{ message?: string }> => {
+    try {
+        const response = await client.post(
+            `/spaces/${space_id}/users/${user_id}/reject`,
+        );
+        return response.data;
     } catch (error) {
         handleError(error);
         throw error;

@@ -1,15 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal } from '@components/modals';
 import useRequireLogin from '@hooks/useRequireLogin';
-import { addUserToSpace } from '@api/spaces';
+import { sendUserRequestToSpace } from '@api/spaces';
+import Spinner from '@components/utility/spinner';
+import { useForm } from 'react-hook-form';
+import Success from '@components/utility/success';
 
-export const JoinSpaceModal: React.FC = () => {
+export const JoinSpaceModal: React.FC<{ onSuccess: () => void }> = ({
+    onSuccess,
+}) => {
     const { requireLogin } = useRequireLogin();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setError,
+    } = useForm();
     const [isOpen, setIsOpen] = useState(false);
-    const [spaceId, setSpaceId] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    const handleJoinSpaceSubmit = async () => {
-        await addUserToSpace(spaceId, 'requested');
+    useEffect(() => {
+        if (isSuccess) {
+            setTimeout(() => {
+                setIsOpen(false);
+                setIsSuccess(false);
+                onSuccess();
+            }, 1500);
+        }
+    }, [isSuccess, onSuccess]);
+
+    const handleJoinSpaceSubmit = async (data: any) => {
+        setIsLoading(true);
+        try {
+            const response = await sendUserRequestToSpace(data.spaceId);
+            if (response) {
+                setIsSuccess(true);
+            } else {
+                setError('spaceId', {
+                    type: 'manual',
+                    message: 'Successfully requested space',
+                });
+            }
+        } catch (error: any) {
+            setError('spaceId', {
+                type: 'manual',
+                message: error?.message || 'An error occurred',
+            });
+        }
+        setIsLoading(false);
     };
 
     const handleOpenModal = () => {
@@ -26,21 +65,41 @@ export const JoinSpaceModal: React.FC = () => {
             </button>
             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <div className="flex flex-col items-center justify-center space-y-4">
-                    <h2 className="text-2xl font-semibold">Join Space</h2>
-                    <input
-                        type="text"
-                        value={spaceId}
-                        onChange={(e) => setSpaceId(e.target.value)}
-                        placeholder="Enter Space ID"
-                        className="border p-2 rounded w-full"
-                    />
-                    <button
-                        onClick={handleJoinSpaceSubmit}
-                        className="bg-green-500 text-white p-2 rounded w-full"
-                    >
-                        Submit
-                    </button>
+                    {isLoading ? (
+                        <Spinner />
+                    ) : isSuccess ? (
+                        <Success />
+                    ) : (
+                        <form onSubmit={handleSubmit(handleJoinSpaceSubmit)}>
+                            <div className="flex flex-col items-center justify-center space-y-4">
+                                <h2 className="text-2xl font-semibold">
+                                    Request to Join Space
+                                </h2>
+                                <input
+                                    type="text"
+                                    {...register('spaceId', {
+                                        required: 'Space ID is required',
+                                    })}
+                                    placeholder="Enter Space ID"
+                                    className="border p-2 rounded w-full"
+                                />
+                                {errors.spaceId?.message && (
+                                    <div className="text-red-500">
+                                        {String(errors.spaceId.message)}
+                                    </div>
+                                )}
+                                <button
+                                    type="submit"
+                                    className="bg-green-500 text-white p-2 rounded w-full"
+                                    disabled={isLoading}
+                                >
+                                    Submit
+                                </button>
+                            </div>
+                        </form>
+                    )}
                 </div>
+                <div className="flex flex-col items-center justify-center space-y-4"></div>
             </Modal>
         </>
     );
