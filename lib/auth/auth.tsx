@@ -15,7 +15,7 @@ interface AuthContextValue {
     setMode: React.Dispatch<React.SetStateAction<'login' | 'signup'>>;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -23,31 +23,6 @@ export const useAuth = () => {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
-};
-
-interface AuthProviderProps {
-    children: React.ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [mode, setMode] = useState<'login' | 'signup'>('login');
-
-    return (
-        <AuthContext.Provider
-            value={{
-                isLoggedIn,
-                setIsLoggedIn,
-                showModal,
-                setShowModal,
-                mode,
-                setMode,
-            }}
-        >
-            {children}
-        </AuthContext.Provider>
-    );
 };
 
 export const loginUser = (

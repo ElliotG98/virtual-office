@@ -4,6 +4,8 @@ import { CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
 import { signupUser, confirmRegistration } from '@lib/auth';
 import { loginUser, useAuth } from '../../lib/auth/auth';
 import { createUser } from '@api/users';
+import { CustomInput } from './CustomInput';
+import { Button } from '@nextui-org/react';
 
 interface SignupFormProps {
     onSuccess: () => void;
@@ -12,6 +14,7 @@ interface SignupFormProps {
 interface FormData {
     username: string;
     email: string;
+    title: string;
     password: string;
     confirmPassword: string;
 }
@@ -21,6 +24,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     const [isVerificationStep, setIsVerificationStep] = useState(false);
     const [cognitoUser, setCognitoUser] = useState<CognitoUser | null>(null);
     const [email, setEmail] = useState('');
+    const [title, setTitle] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -29,6 +33,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
         setEmail(data.email);
         setPassword(data.password);
         setUsername(data.username);
+        setTitle(data.title);
 
         const attributeList = [
             new CognitoUserAttribute({ Name: 'email', Value: data.email }),
@@ -60,7 +65,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
                             setIsLoggedIn,
                             async () => {
                                 try {
-                                    await createUser({ email, name: username });
+                                    await createUser({
+                                        email,
+                                        name: username,
+                                        title,
+                                    });
                                     onSuccess();
                                 } catch (error) {
                                     setIsLoggedIn(false);
@@ -111,25 +120,54 @@ const SignupStep: React.FC<{
         onSignup(data);
     };
 
+    console.log('here');
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...register('username', { required: true })} />
-            {errors.username && <span>Username is required</span>}
-            <input {...register('email', { required: true })} />
-            {errors.email && <span>Email is required</span>}
-            <input
-                type="password"
-                {...register('password', { required: true })}
+            <h2 className="text-2xl font-semibold mb-4">Sign up</h2>
+
+            <CustomInput
+                {...register('username', { required: 'Username is required' })}
+                label="Username"
+                name="username"
+                error={errors.username}
             />
-            {errors.password && <span>Password is required</span>}
-            <input
-                type="password"
-                {...register('confirmPassword', { required: true })}
+
+            <CustomInput
+                {...register('email', { required: 'Email is required' })}
+                label="Email"
+                name="email"
+                error={errors.email}
             />
-            {errors.confirmPassword && (
-                <span>{errors.confirmPassword.message}</span>
-            )}
-            <button type="submit">Signup</button>
+
+            <CustomInput
+                {...register('title', { required: 'Title is required' })}
+                label="Title"
+                name="title"
+                error={errors.title}
+            />
+
+            <CustomInput
+                {...register('password', { required: 'Password is required' })}
+                label="Password"
+                name="password"
+                type="password"
+                error={errors.password}
+            />
+
+            <CustomInput
+                {...register('confirmPassword', {
+                    required: 'Confirm password is required',
+                })}
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+                error={errors.confirmPassword}
+            />
+
+            <Button type="submit" className="global-button">
+                Signup
+            </Button>
         </form>
     );
 };
@@ -149,19 +187,19 @@ const VerificationStep: React.FC<{
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <input
-                {...register('verificationCode', { required: true })}
-                className="mt-1 p-2 w-full border rounded-md"
+            <h2 className="text-2xl font-semibold mb-4">Verification</h2>
+
+            <CustomInput
+                {...register('verificationCode', {
+                    required: 'Verification Code is required',
+                })}
+                label="Verification Code"
+                name="verificationCode"
+                error={errors.verificationCode}
             />
-            {errors.verificationCode && (
-                <span>Verification Code is required</span>
-            )}
-            <button
-                type="submit"
-                className="px-4 py-2 m-2 text-white rounded bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-200"
-            >
+            <Button type="submit" className="global-button">
                 Verify
-            </button>
+            </Button>
         </form>
     );
 };

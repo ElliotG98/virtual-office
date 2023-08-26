@@ -21,3 +21,14 @@ export const getSpacesByUser = async (): Promise<Space[]> => {
         throw error;
     }
 };
+
+export const getUser = async (): Promise<User> => {
+    try {
+        const response = await client.get('/users');
+        return response.data.user;
+    } catch (error: any) {
+        const errorMessage =
+            error?.response?.data?.message || 'An error occurred';
+        throw new Error(errorMessage);
+    }
+};

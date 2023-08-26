@@ -1,6 +1,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { loginUser, useAuth } from '@lib/auth/auth';
+import { CustomInput } from './CustomInput';
+import { Button } from '@nextui-org/react';
 
 interface LoginFormProps {
     onSuccess: () => void;
@@ -25,33 +27,29 @@ const Login: React.FC<LoginFormProps> = ({ onSuccess }) => {
 
     return (
         <div className="p-8 bg-white rounded shadow-md">
-            <h2 className="text-2xl font-semibold mb-4">Login</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-600">
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        {...register('email', { required: true })}
-                        className="mt-1 p-2 w-full border rounded-md"
-                    />
-                    {errors.email && <span>Email is required</span>}
-                </div>
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-600">
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        {...register('password', { required: true })}
-                        className="mt-1 p-2 w-full border rounded-md"
-                    />
-                    {errors.password && <span>Password is required</span>}
-                </div>
-                <button type="submit" className="global-button">
+                <h2 className="text-2xl font-semibold mb-4">Login</h2>
+
+                <CustomInput
+                    {...register('email', {
+                        required: 'Email is required',
+                    })}
+                    label="Email"
+                    name="email"
+                    error={errors.email}
+                />
+                <CustomInput
+                    {...register('password', {
+                        required: 'Password is required',
+                    })}
+                    label="Password"
+                    name="password"
+                    type="password"
+                    error={errors.password}
+                />
+                <Button type="submit" className="global-button">
                     Login
-                </button>
+                </Button>
             </form>
         </div>
     );
