@@ -7,7 +7,7 @@ const useRequireLogin = () => {
         if (isLoggedIn) {
             callback();
         } else {
-            setShowModal(true);
+            setShowModal();
             setMode('login');
         }
     };

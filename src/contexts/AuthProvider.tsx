@@ -4,6 +4,7 @@ import { loginUser, signupUser } from '@services/cognito';
 import { AuthContext } from '@contexts/AuthContext';
 import { CognitoUser, CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { useState } from 'react';
+import { useDisclosure } from '@nextui-org/react';
 
 interface AuthProviderProps {
     children: React.ReactNode;
@@ -11,7 +12,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [showModal, setShowModal] = useState(false);
+    const { isOpen: showModal, onOpenChange: setShowModal } = useDisclosure();
     const [mode, setMode] = useState<'login' | 'signup'>('login');
 
     const login = async (email: string, password: string) => {

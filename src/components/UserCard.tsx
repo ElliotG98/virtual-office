@@ -9,7 +9,7 @@ interface Props {
 }
 
 const UserCard: FC<Props> = ({ user, onDelete, onProfileClick }) => {
-    const initial = user.name[0].toUpperCase();
+    const initial = user.firstName[0].toUpperCase();
 
     return (
         <div className="m-4 group relative">
@@ -19,7 +19,7 @@ const UserCard: FC<Props> = ({ user, onDelete, onProfileClick }) => {
 
             <div className="w-64 h-32 bg-gradient-to-r from-brown-700 via-brown-600 to-brown-700 mb-2 relative hover:bg-opacity-80 transition-all duration-200">
                 <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    {user.name}
+                    {user.firstName + ' ' + user.lastName}
                 </div>
                 <SettingsMenu
                     userId={user.id}

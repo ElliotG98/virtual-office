@@ -21,6 +21,16 @@ export const getSpaceUsers = async (space_id: string): Promise<User> => {
     }
 };
 
+export const getSpacesByUser = async (): Promise<Space[]> => {
+    try {
+        const response = await client.get(`/users/spaces`);
+        return response.data.spaces;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
 export const createSpace = async (name: string): Promise<string> => {
     try {
         const response = await client.post<{ space_id: string }>('/spaces', {

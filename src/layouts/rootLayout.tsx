@@ -43,7 +43,7 @@ export const RootLayout = ({ children }: LayoutProps) => {
                 <Skeleton isLoaded={isLoaded} className="rounded-lg">
                     {user ? (
                         <UserDropdown
-                            userName={user.name}
+                            userName={user.firstName + ' ' + user.lastName}
                             userTitle={user.title}
                         />
                     ) : (

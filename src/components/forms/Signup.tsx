@@ -12,7 +12,8 @@ interface SignupFormProps {
 }
 
 interface FormData {
-    username: string;
+    firstName: string;
+    lastName: string;
     email: string;
     title: string;
     password: string;
@@ -26,13 +27,15 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     const [email, setEmail] = useState('');
     const [title, setTitle] = useState('');
     const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     const handleSignup = async (data: FormData) => {
         setEmail(data.email);
         setPassword(data.password);
-        setUsername(data.username);
+        setFirstName(data.firstName);
+        setLastName(data.lastName);
         setTitle(data.title);
 
         const attributeList = [
@@ -61,7 +64,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
                     try {
                         await createUser({
                             email,
-                            name: username,
+                            firstName,
+                            lastName,
                             title,
                         });
                         onSuccess();
@@ -110,17 +114,26 @@ const SignupStep: React.FC<{
         onSignup(data);
     };
 
-    console.log('here');
-
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <h2 className="text-2xl font-semibold mb-4">Sign up</h2>
 
             <CustomInput
-                {...register('username', { required: 'Username is required' })}
-                label="Username"
-                name="username"
-                error={errors.username}
+                {...register('firstName', {
+                    required: 'First Name is required',
+                })}
+                label="First Name"
+                name="firstName"
+                error={errors.firstName}
+            />
+
+            <CustomInput
+                {...register('lastName', {
+                    required: 'Last Name is required',
+                })}
+                label="Last Name"
+                name="lastName"
+                error={errors.lastName}
             />
 
             <CustomInput
@@ -155,9 +168,7 @@ const SignupStep: React.FC<{
                 error={errors.confirmPassword}
             />
 
-            <Button type="submit" className="global-button">
-                Signup
-            </Button>
+            <Button type="submit">Signup</Button>
         </form>
     );
 };
@@ -187,9 +198,7 @@ const VerificationStep: React.FC<{
                 name="verificationCode"
                 error={errors.verificationCode}
             />
-            <Button type="submit" className="global-button">
-                Verify
-            </Button>
+            <Button type="submit">Verify</Button>
         </form>
     );
 };

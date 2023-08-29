@@ -48,9 +48,7 @@ const Login: React.FC<LoginFormProps> = ({ onSuccess }) => {
                     type="password"
                     error={errors.password}
                 />
-                <Button type="submit" className="global-button">
-                    Login
-                </Button>
+                <Button type="submit">Login</Button>
             </form>
         </div>
     );

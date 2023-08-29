@@ -37,6 +37,22 @@ export const loginUser = async (
     });
 };
 
+export const logoutUser = async (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        try {
+            const cognitoUser = userPool.getCurrentUser();
+            if (cognitoUser !== null) {
+                cognitoUser.signOut();
+                resolve();
+            } else {
+                reject('No user logged in');
+            }
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
+
 export const signupUser = (
     email: string,
     password: string,
