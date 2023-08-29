@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { loginUser, useAuth } from '@lib/auth/auth';
+import { useAuth } from '@lib/auth/auth';
 import { CustomInput } from './CustomInput';
 import { Button } from '@nextui-org/react';
 
@@ -14,15 +14,16 @@ interface FormData {
 }
 
 const Login: React.FC<LoginFormProps> = ({ onSuccess }) => {
-    const { setIsLoggedIn } = useAuth();
+    const { login } = useAuth();
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<FormData>();
 
-    const onSubmit = (data: FormData) => {
-        loginUser(data.email, data.password, setIsLoggedIn, onSuccess);
+    const onSubmit = async (data: FormData) => {
+        await login(data.email, data.password);
+        onSuccess();
     };
 
     return (

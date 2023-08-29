@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
-import { signupUser, confirmRegistration } from '@lib/auth';
-import { loginUser, useAuth } from '../../lib/auth/auth';
+import { confirmUserRegistration } from '@lib/auth';
+import { useAuth } from '../../lib/auth/auth';
 import { createUser } from '@api/users';
 import { CustomInput } from './CustomInput';
 import { Button } from '@nextui-org/react';
@@ -20,7 +20,7 @@ interface FormData {
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
-    const { setIsLoggedIn } = useAuth();
+    const { setIsLoggedIn, login, signup } = useAuth();
     const [isVerificationStep, setIsVerificationStep] = useState(false);
     const [cognitoUser, setCognitoUser] = useState<CognitoUser | null>(null);
     const [email, setEmail] = useState('');
@@ -29,7 +29,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     const [username, setUsername] = useState('');
     const [error, setError] = useState<string | null>(null);
 
-    const handleSignup = (data: FormData) => {
+    const handleSignup = async (data: FormData) => {
         setEmail(data.email);
         setPassword(data.password);
         setUsername(data.username);
@@ -39,54 +39,44 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
             new CognitoUserAttribute({ Name: 'email', Value: data.email }),
         ];
 
-        signupUser(
-            data.email,
-            data.password,
-            attributeList,
-            (user) => {
-                setCognitoUser(user);
-                setIsVerificationStep(true);
-            },
-            (error) => setError(error),
-        );
+        try {
+            const user = await signup(data.email, data.password, attributeList);
+            setCognitoUser(user);
+            setIsVerificationStep(true);
+        } catch (error: any) {
+            setError(error?.message || 'Failed to sign up');
+        }
     };
 
-    const handleVerification = (verificationCode: string) => {
+    const handleVerification = async (verificationCode: string) => {
         if (cognitoUser) {
-            confirmRegistration(
-                cognitoUser,
-                verificationCode,
-                async (result) => {
-                    console.log(result);
+            try {
+                const confirmationMessage = await confirmUserRegistration(
+                    cognitoUser,
+                    verificationCode,
+                );
+                console.log(confirmationMessage);
+                try {
+                    await login(email, password);
                     try {
-                        await loginUser(
+                        await createUser({
                             email,
-                            password,
-                            setIsLoggedIn,
-                            async () => {
-                                try {
-                                    await createUser({
-                                        email,
-                                        name: username,
-                                        title,
-                                    });
-                                    onSuccess();
-                                } catch (error) {
-                                    setIsLoggedIn(false);
-                                    setError(
-                                        'Failed to create user in database.',
-                                    );
-                                    console.error(error);
-                                }
-                            },
-                        );
+                            name: username,
+                            title,
+                        });
+                        onSuccess();
                     } catch (error) {
-                        setError('Failed to log in.');
+                        setIsLoggedIn(false);
+                        setError('Failed to create user in database.');
                         console.error(error);
                     }
-                },
-                (error) => setError(error),
-            );
+                } catch (error) {
+                    setError('Failed to log in.');
+                    console.error(error);
+                }
+            } catch (error: any) {
+                setError(error?.message);
+            }
         }
     };
 
