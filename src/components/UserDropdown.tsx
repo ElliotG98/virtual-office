@@ -7,6 +7,8 @@ import {
     DropdownItem,
     Button,
 } from '@nextui-org/react';
+import { logoutUser } from '@services/cognito';
+import { useAuth } from '@hooks/useAuth';
 
 interface UserDropdownProps {
     userName: string;
@@ -14,28 +16,28 @@ interface UserDropdownProps {
 }
 
 export const UserDropdown = ({ userName, userTitle }: UserDropdownProps) => {
+    const { setIsLoggedIn } = useAuth();
     const dropdownItems = [
         {
             key: 'edit-profile',
             label: 'Edit Profile',
+            action: () => {
+                console.log('Edit profile clicked');
+            },
         },
         {
             key: 'logout',
             label: 'Logout',
+            action: () => {
+                logoutUser();
+                setIsLoggedIn(false);
+            },
         },
     ];
 
     const handleDropdownItemClick = (key: string) => {
-        switch (key) {
-            case 'edit-profile':
-                // Implement edit profile logic here
-                break;
-            case 'logout':
-                // Implement logout logic here
-                break;
-            default:
-                break;
-        }
+        const item = dropdownItems.find((i) => i.key === key);
+        item?.action();
     };
 
     return (
