@@ -1,9 +1,9 @@
 'use client';
 
-import { loginUser, signupUser } from '@services/cognito';
+import { loginUser, refreshSession, signupUser } from '@services/cognito';
 import { AuthContext } from '@contexts/AuthContext';
 import { CognitoUser, CognitoUserAttribute } from 'amazon-cognito-identity-js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDisclosure } from '@nextui-org/react';
 
 interface AuthProviderProps {
@@ -15,6 +15,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { isOpen: showModal, onOpenChange: setShowModal } = useDisclosure();
     const [mode, setMode] = useState<'login' | 'signup'>('login');
 
+    useEffect(() => {
+        initializeSession();
+    }, []);
+
     const login = async (email: string, password: string) => {
         try {
             const token = await loginUser(email, password);
@@ -22,6 +26,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setIsLoggedIn(true);
         } catch (error: any) {
             alert(error);
+        }
+    };
+
+    const initializeSession = async () => {
+        try {
+            const token = await refreshSession();
+            if (token) {
+                localStorage.setItem('cognito_id_token', token);
+                setIsLoggedIn(true);
+            }
+        } catch (error: any) {
+            console.error('Could not refresh session:', error);
+            setIsLoggedIn(false);
         }
     };
 

@@ -9,6 +9,7 @@ import {
 } from '@nextui-org/react';
 import { logoutUser } from '@services/cognito';
 import { useAuth } from '@hooks/useAuth';
+import { updateUser } from '@api/users';
 
 interface UserDropdownProps {
     userName: string;
@@ -21,8 +22,10 @@ export const UserDropdown = ({ userName, userTitle }: UserDropdownProps) => {
         {
             key: 'edit-profile',
             label: 'Edit Profile',
-            action: () => {
-                console.log('Edit profile clicked');
+            action: async () => {
+                //TODO: get update logic, how is update going to be handled (modal?)
+                // const updatedUser = { title: 'New Title' };
+                // await updateUser(updatedUser);
             },
         },
         {

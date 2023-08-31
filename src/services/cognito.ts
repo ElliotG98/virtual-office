@@ -1,6 +1,7 @@
 import {
     CognitoUserAttribute,
     CognitoUserPool,
+    CognitoUserSession,
 } from 'amazon-cognito-identity-js';
 import { AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
 
@@ -87,5 +88,44 @@ export const confirmUserRegistration = (
                 }
             },
         );
+    });
+};
+
+export const refreshSession = async (): Promise<string | null> => {
+    return new Promise<string | null>((resolve, reject) => {
+        const cognitoUser = userPool.getCurrentUser();
+        if (cognitoUser !== null) {
+            cognitoUser.getSession(
+                async (
+                    err: Error | null,
+                    session: CognitoUserSession | null,
+                ) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    if (!session) {
+                        resolve(null);
+                        return;
+                    }
+                    if (session.isValid()) {
+                        resolve(session.getIdToken().getJwtToken());
+                        return;
+                    }
+                    cognitoUser.refreshSession(
+                        session.getRefreshToken(),
+                        (err, session) => {
+                            if (err) {
+                                reject(err);
+                                return;
+                            }
+                            resolve(session.getIdToken().getJwtToken());
+                        },
+                    );
+                },
+            );
+        } else {
+            resolve(null);
+        }
     });
 };
