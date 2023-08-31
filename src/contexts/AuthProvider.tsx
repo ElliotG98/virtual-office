@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             localStorage.setItem('cognito_id_token', token);
             setIsLoggedIn(true);
         } catch (error: any) {
-            alert(error);
+            console.error('Error during login:', error);
         }
     };
 

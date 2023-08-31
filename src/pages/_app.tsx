@@ -6,21 +6,24 @@ import Head from 'next/head';
 import { AuthProvider } from '@contexts/AuthProvider';
 import { NextUIProvider } from '@nextui-org/react';
 import { RootLayout } from '../layouts/rootLayout';
+import { ErrorProvider } from '@contexts/ErrorProvider';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
     return (
         <NextUIProvider>
-            <AuthProvider>
-                <Head>
-                    <meta
-                        content="width=device-width, initial-scale=1"
-                        name="viewport"
-                    />
-                </Head>
-                <RootLayout>
-                    <Component {...pageProps} />
-                </RootLayout>
-            </AuthProvider>
+            <ErrorProvider>
+                <AuthProvider>
+                    <Head>
+                        <meta
+                            content="width=device-width, initial-scale=1"
+                            name="viewport"
+                        />
+                    </Head>
+                    <RootLayout>
+                        <Component {...pageProps} />
+                    </RootLayout>
+                </AuthProvider>
+            </ErrorProvider>
         </NextUIProvider>
     );
 }
