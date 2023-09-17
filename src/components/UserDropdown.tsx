@@ -9,7 +9,7 @@ import {
 } from '@nextui-org/react';
 import { logoutUser } from '@services/cognito';
 import { useAuth } from '@hooks/useAuth';
-import { updateUser } from '@api/users';
+import useUser from '@hooks/useUser';
 
 interface UserDropdownProps {
     userName: string;
@@ -18,6 +18,8 @@ interface UserDropdownProps {
 
 export const UserDropdown = ({ userName, userTitle }: UserDropdownProps) => {
     const { setIsLoggedIn } = useAuth();
+    const { setUser } = useUser();
+
     const dropdownItems = [
         {
             key: 'edit-profile',
@@ -33,6 +35,7 @@ export const UserDropdown = ({ userName, userTitle }: UserDropdownProps) => {
             label: 'Logout',
             action: () => {
                 logoutUser();
+                setUser(null);
                 setIsLoggedIn(false);
             },
         },

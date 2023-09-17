@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
-import { getSpacesByUser } from '@api/users';
+import { getSpacesByUser } from '@api/spaces';
 import { Space } from '../../types/spaces';
 import { useRouter } from 'next/router';
 import { Tooltip } from '@nextui-org/react';
@@ -18,8 +18,10 @@ export const SpacesCarousel: React.FC = () => {
         setSpaces(spaces);
     };
 
-    const handleSpaceClick = (space_id: string) => {
-        router.push(`/spaces/${space_id}`);
+    const handleSpaceClick = (space_id: string, status?: string) => {
+        if (status === 'approved') {
+            router.push(`/spaces/${space_id}`);
+        }
     };
 
     const carouselSettings = {
@@ -36,24 +38,26 @@ export const SpacesCarousel: React.FC = () => {
         <div className="carousel-container w-full px-10">
             <Slider {...carouselSettings}>
                 {spaces.map((space) => (
-                    <div
+                    <Tooltip
                         key={space.space_id}
-                        className={`space-card w-1/3 ${
+                        showArrow={true}
+                        content={
                             space.status === 'requested'
-                                ? 'cursor-not-allowed'
-                                : 'cursor-pointer'
-                        }`}
-                        onClick={() =>
-                            space.status !== 'requested' &&
-                            handleSpaceClick(space.space_id)
+                                ? 'Space Requested'
+                                : null
                         }
+                        className="space-card w-1/3"
+                        isDisabled={space.status === 'approved'}
                     >
-                        <Tooltip
-                            showArrow={true}
-                            content={
+                        <div
+                            key={space.space_id}
+                            className={`${
                                 space.status === 'requested'
-                                    ? 'Space Requested'
-                                    : ''
+                                    ? 'cursor-not-allowed'
+                                    : 'cursor-pointer'
+                            }`}
+                            onClick={() =>
+                                handleSpaceClick(space.space_id, space.status)
                             }
                         >
                             <div
@@ -65,9 +69,10 @@ export const SpacesCarousel: React.FC = () => {
                             >
                                 {space.name}
                             </div>
-                        </Tooltip>
-                        <div className="text-center mt-2">{space.name}</div>
-                    </div>
+
+                            <div className="text-center mt-2">{space.name}</div>
+                        </div>
+                    </Tooltip>
                 ))}
             </Slider>
         </div>

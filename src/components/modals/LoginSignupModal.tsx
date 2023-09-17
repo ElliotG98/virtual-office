@@ -5,8 +5,6 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
-    Button,
-    useDisclosure,
 } from '@nextui-org/react';
 import SignupForm from '../forms/Signup';
 import LoginForm from '../forms/Login';

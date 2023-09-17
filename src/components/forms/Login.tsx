@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '@hooks/useAuth';
 import { CustomInput } from './CustomInput';
 import { Button } from '@nextui-org/react';
+import useUser from '@hooks/useUser';
+import { getUser } from '@api/users';
 
 interface LoginFormProps {
     onSuccess: () => void;
@@ -15,6 +17,7 @@ interface FormData {
 
 const Login: React.FC<LoginFormProps> = ({ onSuccess }) => {
     const { login } = useAuth();
+    const { setIsLoading, setUser } = useUser();
     const {
         register,
         handleSubmit,
@@ -22,8 +25,24 @@ const Login: React.FC<LoginFormProps> = ({ onSuccess }) => {
     } = useForm<FormData>();
 
     const onSubmit = async (data: FormData) => {
-        await login(data.email, data.password);
-        onSuccess();
+        try {
+            setIsLoading(true);
+            await login(data.email, data.password);
+            onSuccess();
+
+            getUser()
+                .then((userDetails) => {
+                    setUser(userDetails);
+                    localStorage.setItem('user', JSON.stringify(userDetails));
+                })
+                .catch((error) => {
+                    console.error('Error fetching user data:', error);
+                });
+        } catch (error) {
+            console.error('Error during login:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

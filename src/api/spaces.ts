@@ -11,10 +11,12 @@ export const getSpace = async (space_id: string): Promise<Space> => {
     }
 };
 
-export const getSpaceUsers = async (space_id: string): Promise<User> => {
+export const getSpaceUsers = async (space_id: string): Promise<User[]> => {
     try {
-        const response = await client.get<User>(`/spaces/${space_id}/users`);
-        return response.data;
+        const response = await client.get<{ users: User[] }>(
+            `/spaces/${space_id}/users`,
+        );
+        return response.data.users;
     } catch (error) {
         handleError(error);
         throw error;
