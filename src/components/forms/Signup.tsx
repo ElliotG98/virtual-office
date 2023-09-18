@@ -21,7 +21,7 @@ interface FormData {
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
-    const { setIsLoggedIn, login, signup } = useAuth();
+    const { login, signup } = useAuth();
     const [isVerificationStep, setIsVerificationStep] = useState(false);
     const [cognitoUser, setCognitoUser] = useState<CognitoUser | null>(null);
     const [email, setEmail] = useState('');
@@ -70,7 +70,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
                         });
                         onSuccess();
                     } catch (error) {
-                        setIsLoggedIn(false);
                         setError('Failed to create user in database.');
                         console.error(error);
                     }

@@ -1,10 +1,12 @@
 import { useAuth } from '@hooks/useAuth';
+import useUser from '@hooks/useUser';
 
 const useRequireLogin = () => {
-    const { isLoggedIn, showModal, setShowModal, mode, setMode } = useAuth();
+    const { user } = useUser();
+    const { showModal, setShowModal, mode, setMode } = useAuth();
 
     const requireLogin = (callback: () => void) => {
-        if (isLoggedIn) {
+        if (user) {
             callback();
         } else {
             setShowModal();

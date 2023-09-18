@@ -11,7 +11,6 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { isOpen: showModal, onOpenChange: setShowModal } = useDisclosure();
     const [mode, setMode] = useState<'login' | 'signup'>('login');
 
@@ -23,7 +22,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             const token = await loginUser(email, password);
             localStorage.setItem('cognito_id_token', token);
-            setIsLoggedIn(true);
         } catch (error: any) {
             console.error('Error during login:', error);
         }
@@ -34,11 +32,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const token = await refreshSession();
             if (token) {
                 localStorage.setItem('cognito_id_token', token);
-                setIsLoggedIn(true);
             }
         } catch (error: any) {
             console.error('Could not refresh session:', error);
-            setIsLoggedIn(false);
         }
     };
 
@@ -58,8 +54,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return (
         <AuthContext.Provider
             value={{
-                isLoggedIn,
-                setIsLoggedIn,
                 showModal,
                 setShowModal,
                 mode,

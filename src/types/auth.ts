@@ -1,8 +1,6 @@
 import { CognitoUser, CognitoUserAttribute } from 'amazon-cognito-identity-js';
 
 export interface AuthContextValue {
-    isLoggedIn: boolean;
-    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
     showModal: boolean;
     setShowModal: () => void;
     mode: 'login' | 'signup';

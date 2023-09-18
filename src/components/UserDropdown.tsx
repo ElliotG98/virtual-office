@@ -17,7 +17,6 @@ interface UserDropdownProps {
 }
 
 export const UserDropdown = ({ userName, userTitle }: UserDropdownProps) => {
-    const { setIsLoggedIn } = useAuth();
     const { setUser } = useUser();
 
     const dropdownItems = [
@@ -36,7 +35,6 @@ export const UserDropdown = ({ userName, userTitle }: UserDropdownProps) => {
             action: () => {
                 logoutUser();
                 setUser(null);
-                setIsLoggedIn(false);
             },
         },
     ];

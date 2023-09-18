@@ -4,11 +4,11 @@ import {
     JoinSpaceModal,
     LoginSignupModal,
 } from '@components/modals';
-import { useAuth } from '@hooks/useAuth';
 import { SpacesCarousel } from '@components/carousel';
+import useUser from '@hooks/useUser';
 
 export default function Home() {
-    const { isLoggedIn } = useAuth();
+    const { user } = useUser();
     const [spacesUpdated, setSpacesUpdated] = useState(false);
 
     const handleJoinSuccess = () => {
@@ -22,7 +22,7 @@ export default function Home() {
                 <JoinSpaceModal onSuccess={handleJoinSuccess} />
             </div>
 
-            {isLoggedIn && <SpacesCarousel key={Number(spacesUpdated)} />}
+            {user && <SpacesCarousel key={Number(spacesUpdated)} />}
 
             <LoginSignupModal />
         </div>
