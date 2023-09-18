@@ -52,7 +52,10 @@ export default function Space() {
             >
                 {users.map((user) => (
                     <div key={user.id}>
-                        <Avatar name={user.firstName} />
+                        <Avatar
+                            name={user.firstName}
+                            color={user.currentUser ? 'success' : 'default'}
+                        />
                     </div>
                 ))}
             </div>
