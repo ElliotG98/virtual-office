@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { getSpace, getSpaceUsers } from '@api/spaces';
 import { useRouter } from 'next/router';
-import { User } from '../../types/index';
-import useUser from '@hooks/useUser';
+import { User } from '@customTypes/index';
 import { Avatar } from '@nextui-org/react';
+import { useModal } from '@hooks/useModal';
+import AddUserModal from '@components/modals/AddUserModal';
 
 export default function Space() {
     const router = useRouter();
     const { space_id } = router.query;
-    const { user } = useUser();
+    const { showModal } = useModal();
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -31,14 +32,14 @@ export default function Space() {
     //When adding a user the user should be added as an active member of the space
     //The added user should see the space in their dashboard and be able to join and see other members
 
-    //Display users
-    //A user should be able to see other members of the space including themselves - this can just be an icon to start with
-
     return (
         <div className="min-h-screen bg-gray-800 overflow-hidden">
             <h1 className="text-white text-center py-4">Space</h1>
 
-            <button className="bg-blue-500 text-white rounded px-4 py-2 mb-4">
+            <button
+                className="bg-blue-500 text-white rounded px-4 py-2 mb-4"
+                onClick={() => showModal(<AddUserModal />)}
+            >
                 Add User
             </button>
 

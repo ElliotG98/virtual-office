@@ -1,7 +1,7 @@
 import { AppError } from '@utility/error/AppError';
 import { useState } from 'react';
 import { ErrorContext } from './ErrorContext';
-import ErrorToast from '@components/ErrorToast';
+import ErrorToast from '@components/utility/ErrorToast';
 
 interface ErrorProviderProps {
     children: React.ReactNode;

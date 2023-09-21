@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppError } from '@utility/error/AppError';
-import Toast from './utility/Toast';
+import Toast from './Toast';
 
 interface ErrorToastProps {
     error: AppError;

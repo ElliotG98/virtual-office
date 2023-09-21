@@ -87,3 +87,5 @@ export const rejectUserRequestToSpace = async (
         throw error;
     }
 };
+
+export const addUserToSpace = async (space_id: string, email: string) => {};

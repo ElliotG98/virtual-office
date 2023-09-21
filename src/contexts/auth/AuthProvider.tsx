@@ -1,7 +1,7 @@
 'use client';
 
 import { loginUser, refreshSession, signupUser } from '@services/cognito';
-import { AuthContext } from '@contexts/AuthContext';
+import { AuthContext } from '@contexts/auth/AuthContext';
 import { CognitoUser, CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { useEffect, useState } from 'react';
 import { useDisclosure } from '@nextui-org/react';
