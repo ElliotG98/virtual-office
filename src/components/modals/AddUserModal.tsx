@@ -1,3 +1,4 @@
+import { addUserToSpace } from '@api/spaces';
 import {
     Button,
     Input,
@@ -7,9 +8,13 @@ import {
     ModalFooter,
     ModalHeader,
 } from '@nextui-org/react';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 
-const AddUserModal = () => {
+interface AddUserModalProps {
+    space_id: string;
+}
+
+const AddUserModal = ({ space_id }: AddUserModalProps) => {
     const {
         register,
         handleSubmit,
@@ -17,8 +22,15 @@ const AddUserModal = () => {
         setError,
     } = useForm();
 
-    const handleAddUserSubmit = async () => {
-        console.log('add user');
+    const handleAddUserSubmit = async (data: any) => {
+        try {
+            await addUserToSpace(space_id, data.userEmail);
+        } catch (e: any) {
+            setError('userEmail', {
+                type: 'manual',
+                message: e?.message || 'An error occurred',
+            });
+        }
     };
 
     return (

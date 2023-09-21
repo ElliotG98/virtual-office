@@ -38,7 +38,9 @@ export default function Space() {
 
             <button
                 className="bg-blue-500 text-white rounded px-4 py-2 mb-4"
-                onClick={() => showModal(<AddUserModal />)}
+                onClick={() =>
+                    showModal(<AddUserModal space_id={space_id as string} />)
+                }
             >
                 Add User
             </button>

@@ -88,4 +88,17 @@ export const rejectUserRequestToSpace = async (
     }
 };
 
-export const addUserToSpace = async (space_id: string, email: string) => {};
+export const addUserToSpace = async (
+    space_id: string,
+    email: string,
+): Promise<{ message?: string }> => {
+    try {
+        const response = await client.post(`/spaces/${space_id}/users/invite`, {
+            email,
+        });
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
