@@ -8,7 +8,7 @@ export interface Space {
 
 export interface User {
     id?: string;
-    currentUser: boolean;
+    currentUser?: boolean;
     firstName: string;
     lastName: string;
     email: string;

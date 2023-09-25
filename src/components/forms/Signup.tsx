@@ -6,6 +6,7 @@ import { useAuth } from '@hooks/useAuth';
 import { createUser } from '@api/users';
 import { CustomInput } from './CustomInput';
 import { Button } from '@nextui-org/react';
+import useUser from '@hooks/useUser';
 
 interface SignupFormProps {
     onSuccess: () => void;
@@ -30,6 +31,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const { setIsLoading } = useUser();
 
     const handleSignup = async (data: FormData) => {
         setEmail(data.email);
@@ -60,6 +62,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
                 );
                 console.log(confirmationMessage);
                 try {
+                    setIsLoading(true);
                     await login(email, password);
                     try {
                         await createUser({

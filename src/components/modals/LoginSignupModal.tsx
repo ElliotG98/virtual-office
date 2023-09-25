@@ -9,9 +9,24 @@ import {
 import SignupForm from '../forms/Signup';
 import LoginForm from '../forms/Login';
 import useRequireLogin from '@hooks/useRequireLogin';
+import { getUser } from '@api/users';
+import useUser from '@hooks/useUser';
 
 export const LoginSignupModal = () => {
     const { showModal, setShowModal, mode, setMode } = useRequireLogin();
+    const { setUser } = useUser();
+
+    const loginSignupSuccess = () => {
+        setShowModal();
+        getUser()
+            .then((userDetails) => {
+                setUser(userDetails);
+                localStorage.setItem('user', JSON.stringify(userDetails));
+            })
+            .catch((error) => {
+                console.error('Error fetching user data:', error);
+            });
+    };
 
     return (
         <>
@@ -24,12 +39,10 @@ export const LoginSignupModal = () => {
                             </ModalHeader>
                             <ModalBody>
                                 {mode === 'login' ? (
-                                    <LoginForm
-                                        onSuccess={() => setShowModal()}
-                                    />
+                                    <LoginForm onSuccess={loginSignupSuccess} />
                                 ) : (
                                     <SignupForm
-                                        onSuccess={() => setShowModal()}
+                                        onSuccess={loginSignupSuccess}
                                     />
                                 )}
                             </ModalBody>

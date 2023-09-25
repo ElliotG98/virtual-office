@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { ModalContext } from './modalContext';
 import { createPortal } from 'react-dom';
 
@@ -8,13 +8,18 @@ interface ModalProviderProps {
 
 export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     const [modalContent, setModalContent] = useState<ReactNode | null>(null);
+    const [portalTarget, setPortalTarget] = useState<Element | null>(null);
+
+    useEffect(() => {
+        setPortalTarget(document.body);
+    }, []);
 
     const showModal = (content: ReactNode) => setModalContent(content);
     const hideModal = () => setModalContent(null);
 
     return (
         <ModalContext.Provider value={{ showModal, hideModal, modalContent }}>
-            {createPortal(children, document.body)}
+            {portalTarget && createPortal(children, portalTarget)}
         </ModalContext.Provider>
     );
 };
