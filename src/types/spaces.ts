@@ -1,4 +1,4 @@
-export type UserSpaceStatus = 'active' | 'requested' | 'removed';
+export type UserSpaceStatus = 'approved' | 'requested' | 'rejected';
 
 export interface Space {
     name: string;
@@ -8,6 +8,7 @@ export interface Space {
 
 export interface User {
     id?: string;
+    status?: UserSpaceStatus;
     currentUser?: boolean;
     firstName: string;
     lastName: string;

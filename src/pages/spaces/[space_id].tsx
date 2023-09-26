@@ -3,13 +3,12 @@ import { getSpace, getSpaceUsers } from '@api/spaces';
 import { useRouter } from 'next/router';
 import { User } from '@customTypes/index';
 import { Avatar } from '@nextui-org/react';
-import { useModal } from '@hooks/useModal';
-import AddUserModal from '@components/modals/AddUserModal';
+
+import SpaceSettingsMenu from '@components/dropdowns/SpaceSettingsDropdown';
 
 export default function Space() {
     const router = useRouter();
     const { space_id } = router.query;
-    const { showModal } = useModal();
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -28,22 +27,21 @@ export default function Space() {
         }
     };
 
-    //Adding a user
-    //When adding a user the user should be added as an active member of the space
-    //The added user should see the space in their dashboard and be able to join and see other members
+    const activeUsers = users.filter((user) => user.status === 'approved');
+    const requestedUsers = users.filter((user) => user.status === 'requested');
+
+    /**
+     * TODO:
+     * - Test adding a user
+     * - Add settings bar
+     * - Display notifications to the user about space requests
+     */
 
     return (
         <div className="min-h-screen bg-gray-800 overflow-hidden">
             <h1 className="text-white text-center py-4">Space</h1>
 
-            <button
-                className="bg-blue-500 text-white rounded px-4 py-2 mb-4"
-                onClick={() =>
-                    showModal(<AddUserModal space_id={space_id as string} />)
-                }
-            >
-                Add User
-            </button>
+            <SpaceSettingsMenu />
 
             <div
                 className="relative mx-auto"
@@ -53,7 +51,7 @@ export default function Space() {
                     background: '#eee',
                 }}
             >
-                {users.map((user) => (
+                {activeUsers.map((user) => (
                     <div key={user.id}>
                         <Avatar
                             name={user.firstName}
