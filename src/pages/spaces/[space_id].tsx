@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { getSpace, getSpaceUsers } from '@api/spaces';
 import { useRouter } from 'next/router';
-import { User } from '@customTypes/index';
+import { User, Space } from '@customTypes/index';
 import { Avatar } from '@nextui-org/react';
-
 import SpaceSettingsMenu from '@components/dropdowns/SpaceSettingsDropdown';
 
 export default function Space() {
     const router = useRouter();
     const { space_id } = router.query;
     const [users, setUsers] = useState<User[]>([]);
+    const [space, setSpace] = useState<Space | null>(null);
 
     useEffect(() => {
         fetchData();
@@ -19,11 +19,14 @@ export default function Space() {
         if (typeof space_id !== 'string') {
             router.replace('/');
         } else {
-            const space = await getSpace(space_id);
-            console.log(space);
-            const spaceUsers = await getSpaceUsers(space_id);
-            console.log(spaceUsers);
+            const [space, spaceUsers] = await Promise.all([
+                getSpace(space_id),
+                getSpaceUsers(space_id),
+            ]);
+            console.log('space', space);
+            console.log('spaceUsers', spaceUsers);
             setUsers(spaceUsers);
+            setSpace(space);
         }
     };
 
@@ -33,13 +36,14 @@ export default function Space() {
     /**
      * TODO:
      * - Test adding a user
-     * - Add settings bar
      * - Display notifications to the user about space requests
      */
 
     return (
         <div className="min-h-screen bg-gray-800 overflow-hidden">
-            <h1 className="text-white text-center py-4">Space</h1>
+            <h1 className="text-white text-center py-4">
+                {space?.name || 'Space'}
+            </h1>
 
             <SpaceSettingsMenu />
 
@@ -52,8 +56,9 @@ export default function Space() {
                 }}
             >
                 {activeUsers.map((user) => (
-                    <div key={user.id}>
+                    <div key={'activeUser-' + user.id}>
                         <Avatar
+                            key={'avatar-' + user.id}
                             name={user.firstName}
                             color={user.currentUser ? 'success' : 'default'}
                         />

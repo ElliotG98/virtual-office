@@ -12,8 +12,10 @@ const SpaceSettingsMenu = () => {
         {
             key: 'addUser',
             label: 'Add User',
-            action: () =>
-                showModal(<AddUserModal space_id={space_id as string} />),
+            action: () => {
+                console.log('addUser');
+                showModal(<AddUserModal space_id={space_id as string} />);
+            },
         },
     ];
 

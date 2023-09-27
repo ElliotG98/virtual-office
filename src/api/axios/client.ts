@@ -1,3 +1,4 @@
+import { HttpError } from '@customTypes/httpError';
 import axios from 'axios';
 
 export const client = axios.create({
@@ -14,3 +15,17 @@ client.interceptors.request.use((config) => {
     }
     return config;
 });
+
+export const apiCall = async <T>(promise: Promise<T>): Promise<T> => {
+    try {
+        const response = await promise;
+        return response;
+    } catch (error: any) {
+        console.log('error', JSON.stringify(error));
+        const statusCode = error?.response?.status;
+        const message = error?.response?.data?.message || 'An error occurred';
+        const developerMessage = error?.response?.data?.developerMessage;
+
+        throw new HttpError(statusCode, message, developerMessage);
+    }
+};
