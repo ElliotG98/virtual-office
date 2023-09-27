@@ -6,7 +6,9 @@ import {
     ModalBody,
     ModalFooter,
     ModalHeader,
+    Spinner,
 } from '@nextui-org/react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface AddUserModalProps {
@@ -21,17 +23,21 @@ const AddUserModal = ({ space_id }: AddUserModalProps) => {
         setError,
     } = useForm();
     const { hideModal } = useModal();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleAddUserSubmit = async (data: any) => {
         try {
+            setIsLoading(true);
             await addUserToSpace(space_id, data.userEmail);
+            setIsLoading(false);
             hideModal();
         } catch (e: any) {
-            console.error(JSON.stringify(e));
             setError('userEmail', {
                 type: 'manual',
                 message: e?.message || 'An error occurred',
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -47,15 +53,24 @@ const AddUserModal = ({ space_id }: AddUserModalProps) => {
                 <Input
                     {...register('userEmail', {
                         required: true,
+                        pattern: {
+                            value: /\S+@\S+\.\S+/,
+                            message: 'Not a valid email',
+                        },
                     })}
-                    label="userEmail"
-                    placeholder="Enter User Email"
+                    type="email"
+                    label="Email"
+                    placeholder="Enter an email"
                 />
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" type="submit">
-                    Submit
-                </Button>
+                {isLoading ? (
+                    <Spinner />
+                ) : (
+                    <Button color="primary" type="submit">
+                        Submit
+                    </Button>
+                )}
             </ModalFooter>
         </form>
     );

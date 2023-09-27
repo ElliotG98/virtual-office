@@ -19,7 +19,7 @@ const SpaceSettingsMenu = () => {
         },
     ];
 
-    return <Dropdown items={items} dialogue={'Settings'} />;
+    return <Dropdown items={items} dialogue={'Settings'} color="primary" />;
 };
 
 export default SpaceSettingsMenu;

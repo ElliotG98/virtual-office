@@ -8,8 +8,8 @@ import {
     Button,
 } from '@nextui-org/react';
 import { logoutUser } from '@services/cognito';
-import { useAuth } from '@hooks/useAuth';
 import useUser from '@hooks/useUser';
+import { useRouter } from 'next/router';
 
 interface UserDropdownProps {
     userName: string;
@@ -17,6 +17,7 @@ interface UserDropdownProps {
 }
 
 export const UserDropdown = ({ userName, userTitle }: UserDropdownProps) => {
+    const router = useRouter();
     const { setUser } = useUser();
 
     const dropdownItems = [
@@ -35,6 +36,7 @@ export const UserDropdown = ({ userName, userTitle }: UserDropdownProps) => {
             action: () => {
                 logoutUser();
                 setUser(null);
+                router.replace('/');
             },
         },
     ];
