@@ -23,19 +23,15 @@ export default function Space() {
                 getSpace(space_id),
                 getSpaceUsers(space_id),
             ]);
-            console.log('space', space);
-            console.log('spaceUsers', spaceUsers);
             setUsers(spaceUsers);
             setSpace(space);
         }
     };
 
     const activeUsers = users.filter((user) => user.status === 'approved');
-    const requestedUsers = users.filter((user) => user.status === 'requested');
 
     /**
      * TODO:
-     * - Test adding a user
      * - Display notifications to the user about space requests
      */
 
@@ -45,7 +41,7 @@ export default function Space() {
                 {space?.name || 'Space'}
             </h1>
 
-            <SpaceSettingsMenu />
+            <SpaceSettingsMenu users={users} />
 
             <div
                 className="relative mx-auto"

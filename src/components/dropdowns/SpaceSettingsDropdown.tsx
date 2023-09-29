@@ -2,8 +2,14 @@ import Dropdown from '../utility/Dropdown';
 import { useModal } from '@hooks/useModal';
 import AddUserModal from '@components/modals/AddUserModal';
 import { useRouter } from 'next/router';
+import UsersModal from '@components/modals/UsersModal';
+import { User } from '@customTypes/spaces';
 
-const SpaceSettingsMenu = () => {
+interface SpaceSettingsMenuProps {
+    users: User[];
+}
+
+const SpaceSettingsMenu = ({ users }: SpaceSettingsMenuProps) => {
     const router = useRouter();
     const { showModal } = useModal();
     const { space_id } = router.query;
@@ -13,8 +19,14 @@ const SpaceSettingsMenu = () => {
             key: 'addUser',
             label: 'Add User',
             action: () => {
-                console.log('addUser');
                 showModal(<AddUserModal space_id={space_id as string} />);
+            },
+        },
+        {
+            key: 'users',
+            label: 'Users',
+            action: () => {
+                showModal(<UsersModal users={users} />);
             },
         },
     ];

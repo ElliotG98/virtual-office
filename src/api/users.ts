@@ -3,7 +3,6 @@ import { User } from '../types/index';
 
 export const createUser = async (user: User): Promise<string> => {
     const response = await apiCall(client.post('/users', user));
-    console.log(response.data);
     return response.data.id;
 };
 
