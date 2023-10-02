@@ -45,7 +45,7 @@ const UsersModal = ({ users }: UsersModalProps) => {
         key: user.id,
         name: user.firstName + ' ' + user.lastName,
         status: user.status,
-        actions: 'remove',
+        actions: '',
     }));
 
     const renderCell = useCallback((user: any, columnKey: Key): any => {
