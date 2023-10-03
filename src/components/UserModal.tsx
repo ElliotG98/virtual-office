@@ -20,7 +20,11 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
     return (
         <>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal
+                className="max-w-fit"
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+            >
                 <ModalContent>
                     {(close) => (
                         <>

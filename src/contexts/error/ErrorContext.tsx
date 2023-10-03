@@ -1,8 +1,9 @@
+import { HttpError } from '@customTypes/httpError';
 import { createContext } from 'react';
-import { AppError } from '@utility/error/AppError';
 
 interface ErrorContextProps {
-    addError: (error: AppError) => void;
+    addError: (error: HttpError) => void;
+    apiCall: <T>(func: () => Promise<any>) => Promise<T | undefined>;
 }
 
 export const ErrorContext = createContext<ErrorContextProps | undefined>(

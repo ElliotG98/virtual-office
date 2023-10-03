@@ -65,3 +65,13 @@ export const addUserToSpace = async (
     );
     return response.data;
 };
+
+export const removeUserFromSpace = async (
+    space_id: string,
+    user_id: string,
+): Promise<{ message?: string }> => {
+    const response = await apiCall(
+        client.delete(`/spaces/${space_id}/users/${user_id}`),
+    );
+    return response.data;
+};

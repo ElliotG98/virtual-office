@@ -24,7 +24,7 @@ const Table = <T,>({
     renderCell,
 }: TableProps<T>) => {
     return (
-        <NextuiTable>
+        <NextuiTable className="max-w-fit">
             <TableHeader columns={columns}>
                 {(column: any) => (
                     <TableColumn key={column.key}>{column.label}</TableColumn>
@@ -36,8 +36,11 @@ const Table = <T,>({
                 isLoading={isLoading}
                 loadingContent={<Spinner label="Loading..." />}
             >
-                {(item) => (
-                    <TableRow key={item.key}>
+                {(item: any) => (
+                    <TableRow
+                        className={item?.currentUser ? 'bg-gray-300/25' : ''}
+                        key={item.key}
+                    >
                         {(columnKey) => (
                             <TableCell>
                                 {renderCell

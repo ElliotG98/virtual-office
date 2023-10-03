@@ -26,7 +26,9 @@ const SpaceSettingsMenu = ({ users }: SpaceSettingsMenuProps) => {
             key: 'users',
             label: 'Users',
             action: () => {
-                showModal(<UsersModal users={users} />);
+                showModal(
+                    <UsersModal space_id={space_id as string} users={users} />,
+                );
             },
         },
     ];

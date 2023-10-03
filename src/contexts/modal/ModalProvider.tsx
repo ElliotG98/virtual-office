@@ -18,7 +18,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
     const showModal = (content: ReactNode) => {
         setModalContent(
-            <Modal isOpen={true} onOpenChange={hideModal}>
+            <Modal className="max-w-fit" isOpen={true} onOpenChange={hideModal}>
                 <ModalContent>{content}</ModalContent>
             </Modal>,
         );

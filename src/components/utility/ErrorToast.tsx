@@ -1,9 +1,9 @@
 import React from 'react';
-import { AppError } from '@utility/error/AppError';
 import Toast from './Toast';
+import { HttpError } from '@customTypes/httpError';
 
 interface ErrorToastProps {
-    error: AppError;
+    error: HttpError;
     onClose: () => void;
 }
 
