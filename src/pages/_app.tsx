@@ -12,27 +12,31 @@ import { RootLayout } from '../layouts/rootLayout';
 import { ErrorProvider } from '@contexts/error/ErrorProvider';
 import { UserProvider } from '@contexts/user/UserProvider';
 import { ModalProvider } from '@contexts/modal/ModalProvider';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '../../react-query-client';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
     return (
         <NextUIProvider>
-            <ErrorProvider>
-                <AuthProvider>
-                    <ModalProvider>
-                        <UserProvider>
-                            <Head>
-                                <meta
-                                    content="width=device-width, initial-scale=1"
-                                    name="viewport"
-                                />
-                            </Head>
-                            <RootLayout>
-                                <Component {...pageProps} />
-                            </RootLayout>
-                        </UserProvider>
-                    </ModalProvider>
-                </AuthProvider>
-            </ErrorProvider>
+            <QueryClientProvider client={queryClient}>
+                <ErrorProvider>
+                    <AuthProvider>
+                        <ModalProvider>
+                            <UserProvider>
+                                <Head>
+                                    <meta
+                                        content="width=device-width, initial-scale=1"
+                                        name="viewport"
+                                    />
+                                </Head>
+                                <RootLayout>
+                                    <Component {...pageProps} />
+                                </RootLayout>
+                            </UserProvider>
+                        </ModalProvider>
+                    </AuthProvider>
+                </ErrorProvider>
+            </QueryClientProvider>
         </NextUIProvider>
     );
 }

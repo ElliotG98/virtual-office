@@ -24,7 +24,7 @@ const Table = <T,>({
     renderCell,
 }: TableProps<T>) => {
     return (
-        <NextuiTable className="max-w-fit">
+        <NextuiTable className="max-w-fit" aria-label="Dynamic Content">
             <TableHeader columns={columns}>
                 {(column: any) => (
                     <TableColumn key={column.key}>{column.label}</TableColumn>

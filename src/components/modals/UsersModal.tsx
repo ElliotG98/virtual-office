@@ -18,7 +18,6 @@ import {
     rejectUserRequestToSpace,
     removeUserFromSpace,
 } from '@api/spaces';
-import { HttpError } from '@customTypes/httpError';
 import { useError } from '@hooks/useError';
 
 type StatusColor = 'success' | 'danger' | 'warning';
@@ -39,8 +38,11 @@ interface UsersModalProps {
 }
 
 const UsersModal = ({ space_id, users }: UsersModalProps) => {
-    const { addError, apiCall } = useError();
+    const { apiCall } = useError();
     const [disableActions, setDisableActions] = useState(false);
+    const [acceptRequestLoading, setAcceptRequestLoading] = useState(false);
+    const [rejectRequestLoading, setRejectRequestLoading] = useState(false);
+    const [removeUserLoading, setRemoveUserLoading] = useState(false);
 
     const columns = [
         {
@@ -70,119 +72,135 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
 
     const handleRemoveUser = async (userId: string) => {
         setDisableActions(true);
+        setRemoveUserLoading(true);
 
         await apiCall(() => removeUserFromSpace(space_id, userId));
 
+        setRemoveUserLoading(false);
         setDisableActions(false);
     };
 
     const handleApproveUserRequest = async (userId: string) => {
         setDisableActions(true);
+        setAcceptRequestLoading(true);
 
         await apiCall(() => approveUserRequestToSpace(space_id, userId));
+
+        setAcceptRequestLoading(false);
         setDisableActions(false);
     };
 
     const handleRejectUserRequest = async (userId: string) => {
         setDisableActions(true);
+        setRejectRequestLoading(true);
 
         await apiCall(() => rejectUserRequestToSpace(space_id, userId));
 
+        setRejectRequestLoading(false);
         setDisableActions(false);
     };
 
-    const renderCell = useCallback((user: any, columnKey: Key): any => {
-        switch (columnKey) {
-            case 'name':
-                return (
-                    <User
-                        avatarProps={{ radius: 'sm', src: user.avatar }}
-                        description={user.email}
-                        name={user.name}
-                    >
-                        {user.email}
-                    </User>
-                );
-            case 'status':
-                return (
-                    <Chip
-                        className="capitalize"
-                        color={statusColorMap[user?.status] || 'default'}
-                        size="sm"
-                        variant="flat"
-                    >
-                        {user.status}
-                    </Chip>
-                );
-            case 'actions':
-                return (
-                    <div className="flex space-x-4">
-                        {user.status === 'requested' && (
-                            <>
-                                <Button
-                                    isIconOnly
-                                    size="sm"
-                                    aria-label="reject request"
-                                    disabled={disableActions}
-                                    onClick={() =>
-                                        handleRejectUserRequest(user.key)
-                                    }
-                                >
-                                    <Tooltip content="Reject Request">
-                                        <FontAwesomeIcon
-                                            icon={faX}
-                                            size="sm"
-                                            className="fa-solid fa-x"
-                                            style={{ color: '#001c40' }}
-                                        />
-                                    </Tooltip>
-                                </Button>
-
-                                <Button
-                                    size="sm"
-                                    isIconOnly
-                                    disabled={disableActions}
-                                    aria-label="accept request"
-                                    onClick={() =>
-                                        handleApproveUserRequest(user.key)
-                                    }
-                                >
-                                    <Tooltip content="Accept Request">
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                            className="fa-solid fa-check"
-                                            size="sm"
-                                            style={{ color: '#001c40' }}
-                                        />
-                                    </Tooltip>
-                                </Button>
-                            </>
-                        )}
-
-                        {user.status === 'approved' && !user.currentUser && (
-                            <Button
-                                size="sm"
-                                isIconOnly
-                                disabled={disableActions}
-                                aria-label="remove user"
-                                onClick={() => handleRemoveUser(user.key)}
-                            >
-                                <Tooltip content="Remove User">
-                                    <FontAwesomeIcon
-                                        icon={faUserMinus}
+    const renderCell = useCallback(
+        (user: any, columnKey: Key): any => {
+            switch (columnKey) {
+                case 'name':
+                    return (
+                        <User
+                            avatarProps={{ radius: 'sm', src: user.avatar }}
+                            description={user.email}
+                            name={user.name}
+                        >
+                            {user.email}
+                        </User>
+                    );
+                case 'status':
+                    return (
+                        <Chip
+                            className="capitalize"
+                            color={statusColorMap[user?.status] || 'default'}
+                            size="sm"
+                            variant="flat"
+                        >
+                            {user.status}
+                        </Chip>
+                    );
+                case 'actions':
+                    return (
+                        <div className="flex space-x-4">
+                            {user.status === 'requested' && (
+                                <>
+                                    <Button
+                                        isIconOnly
                                         size="sm"
-                                        className="fa-solid fa-user-minus"
-                                        style={{ color: '#001c40' }}
-                                    />
-                                </Tooltip>
-                            </Button>
-                        )}
-                    </div>
-                );
-            default:
-                return getKeyValue(user, columnKey);
-        }
-    }, []);
+                                        aria-label="reject request"
+                                        disabled={disableActions}
+                                        isLoading={rejectRequestLoading}
+                                        onClick={() =>
+                                            handleRejectUserRequest(user.key)
+                                        }
+                                    >
+                                        <Tooltip content="Reject Request">
+                                            <FontAwesomeIcon
+                                                icon={faX}
+                                                size="sm"
+                                                className="fa-solid fa-x"
+                                                style={{ color: '#001c40' }}
+                                            />
+                                        </Tooltip>
+                                    </Button>
+
+                                    <Button
+                                        size="sm"
+                                        isIconOnly
+                                        disabled={disableActions}
+                                        isLoading={acceptRequestLoading}
+                                        aria-label="accept request"
+                                        onClick={() =>
+                                            handleApproveUserRequest(user.key)
+                                        }
+                                    >
+                                        <Tooltip content="Accept Request">
+                                            <FontAwesomeIcon
+                                                icon={faCheck}
+                                                className="fa-solid fa-check"
+                                                size="sm"
+                                                style={{ color: '#001c40' }}
+                                            />
+                                        </Tooltip>
+                                    </Button>
+                                </>
+                            )}
+
+                            {user.status === 'approved' &&
+                                !user.currentUser && (
+                                    <Button
+                                        size="sm"
+                                        isIconOnly
+                                        disabled={disableActions}
+                                        isLoading={removeUserLoading}
+                                        aria-label="remove user"
+                                        onClick={() =>
+                                            handleRemoveUser(user.key)
+                                        }
+                                    >
+                                        <Tooltip content="Remove User">
+                                            <FontAwesomeIcon
+                                                icon={faUserMinus}
+                                                size="sm"
+                                                className="fa-solid fa-user-minus"
+                                                style={{ color: '#001c40' }}
+                                            />
+                                        </Tooltip>
+                                    </Button>
+                                )}
+                        </div>
+                    );
+                default:
+                    return getKeyValue(user, columnKey);
+            }
+        },
+        [disableActions],
+    );
 
     return (
         <ModalContent className="w-full">
