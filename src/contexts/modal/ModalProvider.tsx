@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { ModalContext } from './ModalContext';
 import { createPortal } from 'react-dom';
 import { Modal, ModalContent } from '@nextui-org/react';
@@ -25,13 +25,23 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
         setIsModalOpen(true);
     };
 
+    const updateModal = (newContent: ReactNode) => {
+        setModalContent(
+            <Modal className="max-w-fit" isOpen={true} onOpenChange={hideModal}>
+                <ModalContent>{newContent}</ModalContent>
+            </Modal>,
+        );
+    };
+
     const hideModal = () => {
         setModalContent(null);
         setIsModalOpen(false);
     };
 
     return (
-        <ModalContext.Provider value={{ showModal, hideModal, modalContent }}>
+        <ModalContext.Provider
+            value={{ showModal, hideModal, modalContent, updateModal }}
+        >
             {children}
             {isModalOpen &&
                 portalTarget &&

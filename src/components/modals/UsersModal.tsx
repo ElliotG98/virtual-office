@@ -19,6 +19,7 @@ import {
     removeUserFromSpace,
 } from '@api/spaces';
 import { useError } from '@hooks/useError';
+import { useQueryClient } from '@tanstack/react-query';
 
 type StatusColor = 'success' | 'danger' | 'warning';
 
@@ -39,10 +40,10 @@ interface UsersModalProps {
 
 const UsersModal = ({ space_id, users }: UsersModalProps) => {
     const { apiCall } = useError();
-    const [disableActions, setDisableActions] = useState(false);
-    const [acceptRequestLoading, setAcceptRequestLoading] = useState(false);
-    const [rejectRequestLoading, setRejectRequestLoading] = useState(false);
-    const [removeUserLoading, setRemoveUserLoading] = useState(false);
+    const queryClient = useQueryClient();
+    const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>(
+        {},
+    );
 
     const columns = [
         {
@@ -70,34 +71,26 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
         }))
         .sort((a, b) => ((a?.status || '') > (b?.status || '') ? 1 : -1));
 
-    const handleRemoveUser = async (userId: string) => {
-        setDisableActions(true);
-        setRemoveUserLoading(true);
+    const handleAction = async (
+        userId: string,
+        action: 'approve' | 'reject' | 'remove',
+    ) => {
+        setLoadingStates({ ...loadingStates, [userId]: true });
 
-        await apiCall(() => removeUserFromSpace(space_id, userId));
+        const actions = {
+            approve: async () =>
+                apiCall(() => approveUserRequestToSpace(space_id, userId)),
+            reject: async () =>
+                apiCall(() => rejectUserRequestToSpace(space_id, userId)),
+            remove: async () =>
+                apiCall(() => removeUserFromSpace(space_id, userId)),
+        };
 
-        setRemoveUserLoading(false);
-        setDisableActions(false);
-    };
+        await actions[action]();
 
-    const handleApproveUserRequest = async (userId: string) => {
-        setDisableActions(true);
-        setAcceptRequestLoading(true);
+        queryClient.invalidateQueries({ queryKey: ['spaceUsers'] });
 
-        await apiCall(() => approveUserRequestToSpace(space_id, userId));
-
-        setAcceptRequestLoading(false);
-        setDisableActions(false);
-    };
-
-    const handleRejectUserRequest = async (userId: string) => {
-        setDisableActions(true);
-        setRejectRequestLoading(true);
-
-        await apiCall(() => rejectUserRequestToSpace(space_id, userId));
-
-        setRejectRequestLoading(false);
-        setDisableActions(false);
+        setLoadingStates({ ...loadingStates, [userId]: false });
     };
 
     const renderCell = useCallback(
@@ -133,40 +126,44 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
                                         isIconOnly
                                         size="sm"
                                         aria-label="reject request"
-                                        disabled={disableActions}
-                                        isLoading={rejectRequestLoading}
+                                        disabled={loadingStates[user.key]}
+                                        isLoading={loadingStates[user.key]}
                                         onClick={() =>
-                                            handleRejectUserRequest(user.key)
+                                            handleAction(user.key, 'reject')
                                         }
                                     >
-                                        <Tooltip content="Reject Request">
-                                            <FontAwesomeIcon
-                                                icon={faX}
-                                                size="sm"
-                                                className="fa-solid fa-x"
-                                                style={{ color: '#001c40' }}
-                                            />
-                                        </Tooltip>
+                                        {!loadingStates[user.key] && (
+                                            <Tooltip content="Reject Request">
+                                                <FontAwesomeIcon
+                                                    icon={faX}
+                                                    size="sm"
+                                                    className="fa-solid fa-x"
+                                                    style={{ color: '#001c40' }}
+                                                />
+                                            </Tooltip>
+                                        )}
                                     </Button>
 
                                     <Button
                                         size="sm"
                                         isIconOnly
-                                        disabled={disableActions}
-                                        isLoading={acceptRequestLoading}
-                                        aria-label="accept request"
+                                        disabled={loadingStates[user.key]}
+                                        isLoading={loadingStates[user.key]}
+                                        aria-label="approve request"
                                         onClick={() =>
-                                            handleApproveUserRequest(user.key)
+                                            handleAction(user.key, 'approve')
                                         }
                                     >
-                                        <Tooltip content="Accept Request">
-                                            <FontAwesomeIcon
-                                                icon={faCheck}
-                                                className="fa-solid fa-check"
-                                                size="sm"
-                                                style={{ color: '#001c40' }}
-                                            />
-                                        </Tooltip>
+                                        {!loadingStates[user.key] && (
+                                            <Tooltip content="Accept Request">
+                                                <FontAwesomeIcon
+                                                    icon={faCheck}
+                                                    className="fa-solid fa-check"
+                                                    size="sm"
+                                                    style={{ color: '#001c40' }}
+                                                />
+                                            </Tooltip>
+                                        )}
                                     </Button>
                                 </>
                             )}
@@ -176,21 +173,23 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
                                     <Button
                                         size="sm"
                                         isIconOnly
-                                        disabled={disableActions}
-                                        isLoading={removeUserLoading}
+                                        disabled={loadingStates[user.key]}
+                                        isLoading={loadingStates[user.key]}
                                         aria-label="remove user"
                                         onClick={() =>
-                                            handleRemoveUser(user.key)
+                                            handleAction(user.key, 'remove')
                                         }
                                     >
-                                        <Tooltip content="Remove User">
-                                            <FontAwesomeIcon
-                                                icon={faUserMinus}
-                                                size="sm"
-                                                className="fa-solid fa-user-minus"
-                                                style={{ color: '#001c40' }}
-                                            />
-                                        </Tooltip>
+                                        {!loadingStates[user.key] && (
+                                            <Tooltip content="Remove User">
+                                                <FontAwesomeIcon
+                                                    icon={faUserMinus}
+                                                    size="sm"
+                                                    className="fa-solid fa-user-minus"
+                                                    style={{ color: '#001c40' }}
+                                                />
+                                            </Tooltip>
+                                        )}
                                     </Button>
                                 )}
                         </div>
@@ -199,7 +198,7 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
                     return getKeyValue(user, columnKey);
             }
         },
-        [disableActions],
+        [loadingStates, users],
     );
 
     return (

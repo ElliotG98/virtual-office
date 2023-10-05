@@ -4,6 +4,7 @@ import AddUserModal from '@components/modals/AddUserModal';
 import { useRouter } from 'next/router';
 import UsersModal from '@components/modals/UsersModal';
 import { User } from '@customTypes/spaces';
+import { useEffect } from 'react';
 
 interface SpaceSettingsMenuProps {
     users: User[];
@@ -11,8 +12,16 @@ interface SpaceSettingsMenuProps {
 
 const SpaceSettingsMenu = ({ users }: SpaceSettingsMenuProps) => {
     const router = useRouter();
-    const { showModal } = useModal();
+    const { showModal, updateModal } = useModal();
     const { space_id } = router.query;
+
+    useEffect(() => {
+        if (users) {
+            updateModal(
+                <UsersModal space_id={space_id as string} users={users} />,
+            );
+        }
+    }, [users]);
 
     const items = [
         {

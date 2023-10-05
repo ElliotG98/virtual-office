@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react';
-import { getSpace, getSpaceUsers } from '@api/spaces';
 import { useRouter } from 'next/router';
-import { User, Space } from '@customTypes/index';
+import { Space } from '@customTypes/index';
 import { Avatar } from '@nextui-org/react';
 import SpaceSettingsMenu from '@components/dropdowns/SpaceSettingsDropdown';
 import { useSpace } from '@hooks/useQueries/useSpace';
 import { useSpaceUsers } from '@hooks/useQueries/useSpaceUsers';
+import { useEffect } from 'react';
 
 export default function Space() {
     const router = useRouter();
     const { space_id } = router.query;
-    if (typeof space_id !== 'string') {
-        router.replace('/');
-    }
+
+    useEffect(() => {
+        if (typeof space_id !== 'string') {
+            router.replace('/');
+        }
+    }, [space_id, router]);
 
     const { data: space, isLoading: isLoadingSpace } = useSpace(
         space_id as string,

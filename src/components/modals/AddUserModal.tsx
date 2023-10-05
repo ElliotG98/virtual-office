@@ -8,6 +8,7 @@ import {
     ModalHeader,
     Spinner,
 } from '@nextui-org/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -23,12 +24,14 @@ const AddUserModal = ({ space_id }: AddUserModalProps) => {
         setError,
     } = useForm();
     const { hideModal } = useModal();
+    const queryClient = useQueryClient();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleAddUserSubmit = async (data: any) => {
         try {
             setIsLoading(true);
             await addUserToSpace(space_id, data.userEmail);
+            queryClient.invalidateQueries({ queryKey: ['spaceUsers'] });
             setIsLoading(false);
             hideModal();
         } catch (e: any) {
