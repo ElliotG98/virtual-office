@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router';
-import { Space } from '@customTypes/index';
-import { Avatar, Badge } from '@nextui-org/react';
+import { Avatar } from '@nextui-org/react';
 import SpaceSettingsMenu from '@components/dropdowns/SpaceSettingsDropdown';
 import { useSpace } from '@hooks/useQueries/useSpace';
 import { useSpaceUsers } from '@hooks/useQueries/useSpaceUsers';
 import { useEffect } from 'react';
+import Space from '@components/Space';
 
-export default function Space() {
+export default function SpacePage() {
     const router = useRouter();
     const { space_id } = router.query;
 
@@ -25,8 +25,10 @@ export default function Space() {
 
     if (isLoadingSpace || isLoadingUsers) return <p>Loading...</p>;
 
-    const activeUsers = users?.filter((user) => user.status === 'approved');
-    const userRequests = users?.filter((user) => user.status === 'requested');
+    const activeUsers =
+        users?.filter((user) => user.status === 'approved') || [];
+    const userRequests =
+        users?.filter((user) => user.status === 'requested') || [];
 
     return (
         <div className="min-h-screen bg-gray-800 overflow-hidden">
@@ -39,26 +41,7 @@ export default function Space() {
                 users={users || []}
             />
 
-            {/* TODO: CREATE SPACE SECTION COMPONENT */}
-
-            <div
-                className="relative mx-auto"
-                style={{
-                    width: 800,
-                    height: 600,
-                    background: '#eee',
-                }}
-            >
-                {activeUsers?.map((user) => (
-                    <div key={'activeUser-' + user.id}>
-                        <Avatar
-                            key={'avatar-' + user.id}
-                            name={user.firstName}
-                            color={user.currentUser ? 'success' : 'default'}
-                        />
-                    </div>
-                ))}
-            </div>
+            <Space users={activeUsers} />
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Skeleton } from '@nextui-org/react';
-import { UserDropdown } from '@components/UserDropdown';
+import { UserDropdown } from '@components/dropdowns/UserDropdown';
 import useRequireLogin from '../hooks/useRequireLogin';
 import useUser from '@hooks/useUser';
 
