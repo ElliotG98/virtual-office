@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { Space } from '@customTypes/index';
-import { Avatar } from '@nextui-org/react';
+import { Avatar, Badge } from '@nextui-org/react';
 import SpaceSettingsMenu from '@components/dropdowns/SpaceSettingsDropdown';
 import { useSpace } from '@hooks/useQueries/useSpace';
 import { useSpaceUsers } from '@hooks/useQueries/useSpaceUsers';
@@ -26,6 +26,7 @@ export default function Space() {
     if (isLoadingSpace || isLoadingUsers) return <p>Loading...</p>;
 
     const activeUsers = users?.filter((user) => user.status === 'approved');
+    const userRequests = users?.filter((user) => user.status === 'requested');
 
     return (
         <div className="min-h-screen bg-gray-800 overflow-hidden">
@@ -33,7 +34,12 @@ export default function Space() {
                 {space?.name || 'Space'}
             </h1>
 
-            <SpaceSettingsMenu users={users || []} />
+            <SpaceSettingsMenu
+                userRequests={userRequests?.length || 0}
+                users={users || []}
+            />
+
+            {/* TODO: CREATE SPACE SECTION COMPONENT */}
 
             <div
                 className="relative mx-auto"

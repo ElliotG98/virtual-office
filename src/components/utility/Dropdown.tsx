@@ -4,11 +4,13 @@ import {
     DropdownMenu,
     DropdownItem,
     Button,
+    Badge,
 } from '@nextui-org/react';
 
 interface Item {
     key: string;
     label: string;
+    badge?: number;
     action: () => void;
 }
 
@@ -31,13 +33,25 @@ const Dropdown = ({ items, dialogue, color = 'default' }: DropdownProps) => {
         item?.action();
     };
 
+    const badges = items.reduce((acc, curr) => {
+        acc += curr?.badge || 0;
+        return acc;
+    }, 0);
+
     return (
         <NextuiDropdown>
-            <DropdownTrigger>
-                <Button variant="bordered" color={color}>
-                    {dialogue}
-                </Button>
-            </DropdownTrigger>
+            <Badge
+                color="danger"
+                content={badges}
+                isInvisible={badges ? false : true}
+                shape="circle"
+            >
+                <DropdownTrigger>
+                    <Button variant="bordered" color={color}>
+                        {dialogue}
+                    </Button>
+                </DropdownTrigger>
+            </Badge>
             <DropdownMenu aria-label="Dynamic Actions" items={items}>
                 {(item: any) => (
                     <DropdownItem

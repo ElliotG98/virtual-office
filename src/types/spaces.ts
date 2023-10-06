@@ -3,6 +3,7 @@ export type UserSpaceStatus = 'approved' | 'requested' | 'rejected';
 export interface Space {
     name: string;
     space_id: string;
+    status: UserSpaceStatus;
 }
 
 export interface User {

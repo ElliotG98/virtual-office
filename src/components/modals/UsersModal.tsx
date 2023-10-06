@@ -135,6 +135,12 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
                                         {!loadingStates[user.key] && (
                                             <Tooltip content="Reject Request">
                                                 <FontAwesomeIcon
+                                                    onClick={() =>
+                                                        handleAction(
+                                                            user.key,
+                                                            'reject',
+                                                        )
+                                                    }
                                                     icon={faX}
                                                     size="sm"
                                                     className="fa-solid fa-x"
@@ -157,6 +163,12 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
                                         {!loadingStates[user.key] && (
                                             <Tooltip content="Accept Request">
                                                 <FontAwesomeIcon
+                                                    onClick={() =>
+                                                        handleAction(
+                                                            user.key,
+                                                            'approve',
+                                                        )
+                                                    }
                                                     icon={faCheck}
                                                     className="fa-solid fa-check"
                                                     size="sm"
@@ -183,6 +195,12 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
                                         {!loadingStates[user.key] && (
                                             <Tooltip content="Remove User">
                                                 <FontAwesomeIcon
+                                                    onClick={() =>
+                                                        handleAction(
+                                                            user.key,
+                                                            'remove',
+                                                        )
+                                                    }
                                                     icon={faUserMinus}
                                                     size="sm"
                                                     className="fa-solid fa-user-minus"
@@ -202,12 +220,12 @@ const UsersModal = ({ space_id, users }: UsersModalProps) => {
     );
 
     return (
-        <ModalContent className="w-full">
+        <>
             <ModalHeader>USERS</ModalHeader>
             <ModalBody>
                 <Table columns={columns} rows={rows} renderCell={renderCell} />
             </ModalBody>
-        </ModalContent>
+        </>
     );
 };
 

@@ -40,13 +40,12 @@ export const SpacesCarousel: React.FC = () => {
                 {spaces.map((space) => (
                     <Tooltip
                         key={space.space_id}
-                        showArrow={true}
                         content={
                             space.status === 'requested'
                                 ? 'Space Requested'
                                 : null
                         }
-                        className="space-card w-1/3"
+                        className="flex items-center w-1/6 justify-center m-auto"
                         isDisabled={space.status === 'approved'}
                     >
                         <div

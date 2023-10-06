@@ -8,9 +8,10 @@ import { useEffect } from 'react';
 
 interface SpaceSettingsMenuProps {
     users: User[];
+    userRequests: number;
 }
 
-const SpaceSettingsMenu = ({ users }: SpaceSettingsMenuProps) => {
+const SpaceSettingsMenu = ({ users, userRequests }: SpaceSettingsMenuProps) => {
     const router = useRouter();
     const { showModal, updateModal } = useModal();
     const { space_id } = router.query;
@@ -34,6 +35,7 @@ const SpaceSettingsMenu = ({ users }: SpaceSettingsMenuProps) => {
         {
             key: 'users',
             label: 'Users',
+            badge: userRequests,
             action: () => {
                 showModal(
                     <UsersModal space_id={space_id as string} users={users} />,

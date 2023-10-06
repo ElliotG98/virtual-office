@@ -16,15 +16,6 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
         setPortalTarget(document.body);
     }, []);
 
-    const showModal = (content: ReactNode) => {
-        setModalContent(
-            <Modal className="max-w-fit" isOpen={true} onOpenChange={hideModal}>
-                <ModalContent>{content}</ModalContent>
-            </Modal>,
-        );
-        setIsModalOpen(true);
-    };
-
     const updateModal = (newContent: ReactNode) => {
         setModalContent(
             <Modal className="max-w-fit" isOpen={true} onOpenChange={hideModal}>
@@ -36,6 +27,15 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     const hideModal = () => {
         setModalContent(null);
         setIsModalOpen(false);
+    };
+
+    const showModal = (content: ReactNode) => {
+        setModalContent(
+            <Modal className="max-w-fit" isOpen={true} onOpenChange={hideModal}>
+                <ModalContent>{content}</ModalContent>
+            </Modal>,
+        );
+        setIsModalOpen(true);
     };
 
     return (
